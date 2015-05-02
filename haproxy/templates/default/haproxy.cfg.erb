@@ -106,7 +106,7 @@ backend nodejs_app_servers
 
 <% if !node[:haproxy][:custom_ports].empty? -%>
   <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
-backend nodejs_app_servers_<%= app_name.gsub(/[^\w.:-]/, '_') %>
+backend nodejs_app_servers_<%= app_name %>
   balance <%= node[:haproxy][:balance] %>
   option redispatch
   option forwardfor
