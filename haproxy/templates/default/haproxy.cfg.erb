@@ -106,13 +106,13 @@ backend nodejs_app_servers
 
 <% if !node[:haproxy][:custom_ports].empty? -%>
   <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
-    backend nodejs_app_servers_<%= app_name %>
-      balance <%= node[:haproxy][:balance] %>
-      option redispatch
-      option forwardfor
-      option httpchk <%= node[:haproxy][:health_check_method] %> <%= node[:haproxy][:health_check_url] %>
+backend nodejs_app_servers_<%= app_name.gsub(/[^\w.:-]/, '_') %>
+  balance <%= node[:haproxy][:balance] %>
+  option redispatch
+  option forwardfor
+  option httpchk <%= node[:haproxy][:health_check_method] %> <%= node[:haproxy][:health_check_url] %>
       <% node[:haproxy][:nodejs_backends].each do |backend| -%>
-      server <%= backend['name'] %> <%= backend['ip'] %>:<%= app_config['port'] %> weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_nodejs_app] %> check inter <%= node[:haproxy][:check_interval] %>
+  server <%= backend['name'] %> <%= backend['ip'] %>:<%= app_config['port'] %> weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_nodejs_app] %> check inter <%= node[:haproxy][:check_interval] %>
       <% end -%>
   <% end -%>
 <% end -%>
