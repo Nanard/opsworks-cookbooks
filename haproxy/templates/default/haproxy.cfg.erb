@@ -92,7 +92,19 @@ backend php_app_servers_ssl
   <% end -%>  
 <% end -%>
 
-
+<% if !node[:haproxy][:custom_ports].empty? -%>
+  <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
+backend nodejs_app_servers_<%= app_name %>
+  reqrep ^([^\ :]*)\ <%= app_config['mounted_at'] %>(.*)     \1\ /\2
+  balance <%= node[:haproxy][:balance] %>
+  option redispatch
+  option forwardfor
+  option httpchk <%= node[:haproxy][:health_check_method] %> <%= node[:haproxy][:health_check_url] %>
+      <% node[:haproxy][:nodejs_backends].each do |backend| -%>
+  server <%= backend['name'] %> <%= backend['ip'] %>:<%= app_config['port'] %> weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_nodejs_app] %> check inter <%= node[:haproxy][:check_interval] %>
+      <% end -%>
+  <% end -%>
+<% else -%>
 <% if !node[:haproxy][:nodejs_backends].empty? -%>
 backend nodejs_app_servers
   balance <%= node[:haproxy][:balance] %>
@@ -103,18 +115,6 @@ backend nodejs_app_servers
   server <%= backend['name'] %> <%= backend['ip'] %>:80 weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_nodejs_app] %> check inter <%= node[:haproxy][:check_interval] %>
   <% end -%>
 <% end -%>
-
-<% if !node[:haproxy][:custom_ports].empty? -%>
-  <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
-backend nodejs_app_servers_<%= app_name %>
-  balance <%= node[:haproxy][:balance] %>
-  option redispatch
-  option forwardfor
-  option httpchk <%= node[:haproxy][:health_check_method] %> <%= node[:haproxy][:health_check_url] %>
-      <% node[:haproxy][:nodejs_backends].each do |backend| -%>
-  server <%= backend['name'] %> <%= backend['ip'] %>:<%= app_config['port'] %> weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_nodejs_app] %> check inter <%= node[:haproxy][:check_interval] %>
-      <% end -%>
-  <% end -%>
 <% end -%>
 
 <% if !node[:haproxy][:nodejs_backends].empty? -%>
