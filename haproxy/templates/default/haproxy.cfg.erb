@@ -117,16 +117,6 @@ backend nodejs_app_servers
   <% end -%>
 <% end -%>
 
-# all domains of node.js applications
-  <% node[:haproxy][:node].each do |app_name, app_config| -%>
-    <% app_config['domains'].each do |domain| -%>
-  acl nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> hdr_end(host) -i <%= domain %>
-      <% if app_config['mounted_at'] -%>
-  acl nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>_path path_beg <%= app_config['mounted_at'] %>
-      <% end -%>
-    <% end -%>
-  <% end -%>
-
 <% if !node[:haproxy][:nodejs_backends].empty? -%>
 backend nodejs_app_servers_ssl
   mode tcp
