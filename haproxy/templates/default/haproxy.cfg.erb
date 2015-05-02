@@ -315,7 +315,9 @@ frontend https-in
   use_backend php_app_servers_ssl if php_applications_ssl
   <% end -%>
   <% unless node[:haproxy][:nodejs_applications].empty? || node[:haproxy][:nodejs_backends].empty? -%>
+  <% if !node[:haproxy][:custom_ports].empty? -%>
   use_backend nodejs_app_servers_ssl if nodejs_applications_ssl
+  <% end -%>
   <% end -%>
   <% unless node[:haproxy][:static_applications].empty? || node[:haproxy][:static_backends].empty? -%>
   use_backend static_servers_ssl if static_applications_ssl
