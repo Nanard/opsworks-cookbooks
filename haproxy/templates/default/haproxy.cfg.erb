@@ -106,7 +106,7 @@ backend nodejs_app_servers
 
 <% if !node[:haproxy][:custom_ports].empty? -%>
   <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
-    backend nodejs_app_servers
+    backend nodejs_app_servers_<%= app_name %>
       balance <%= node[:haproxy][:balance] %>
       option redispatch
       option forwardfor
@@ -242,9 +242,9 @@ frontend http-in
     <% node[:haproxy][:nodejs_applications].each do |app_name, app_config| -%>
       <% app_config['domains'].each do |domain| -%>
         <% if app_config['mounted_at'] -%>
-  use_backend nodejs_app_servers if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> nodejs_application_<%= app_name %>_domain_<%= domain %>_path
+  use_backend nodejs_app_servers_<%= app_name %> if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> nodejs_application_<%= app_name %>_domain_<%= domain %>_path
         <% else -%>
-  use_backend nodejs_app_servers if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>
+  use_backend nodejs_app_servers_<%= app_name %> if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>
         <% end -%>
       <% end -%>
     <% end -%>
