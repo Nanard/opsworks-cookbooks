@@ -104,8 +104,8 @@ backend nodejs_app_servers
   <% end -%>
 <% end -%>
 
-<% if !node[:custom_ports].empty && !node[:custom_ports][:apps].empty? -%>
-  <% node[:custom_ports][:apps].each do |app_name, app_config| -%>
+<% if !node[:haproxy][:custom_ports].empty? -%>
+  <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
     backend nodejs_app_servers
       balance <%= node[:haproxy][:balance] %>
       option redispatch
