@@ -233,7 +233,7 @@ frontend http-in
     <% node[:haproxy][:static_applications].each do |app_name, app_config| -%>
       <% app_config['domains'].each do |domain| -%>
         <% if app_config['mounted_at'] -%>
-  use_backend static_servers if static_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> static_application_<%= app_name %>_domain_<%= domain %>_path
+  use_backend static_servers_<%= app_name %> if static_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> static_application_<%= app_name %>_domain_<%= domain %>_path
         <% else -%>
   use_backend static_servers if static_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>
         <% end -%>
@@ -247,7 +247,7 @@ frontend http-in
         <% if app_config['mounted_at'] -%>
   use_backend nodejs_app_servers_<%= app_name %> if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %> nodejs_application_<%= app_name %>_domain_<%= domain %>_path
         <% else -%>
-  use_backend nodejs_app_servers_<%= app_name %> if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>
+  use_backend nodejs_app_servers if nodejs_application_<%= app_name %>_domain_<%= domain.gsub(/[^\w.:-]/, '_') %>
         <% end -%>
       <% end -%>
     <% end -%>
