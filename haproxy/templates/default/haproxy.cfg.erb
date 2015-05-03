@@ -269,7 +269,9 @@ frontend http-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
+  <% if !node[:haproxy][:custom_ports].empty? -%>
   default_backend nodejs_app_servers
+  <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
   default_backend static_servers
   <% elsif !node[:haproxy][:java_backends].empty? -%>
@@ -328,7 +330,9 @@ frontend https-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers_ssl
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
+  <% if !node[:haproxy][:custom_ports].empty? -%>
   default_backend nodejs_app_servers_ssl
+  <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
   default_backend static_servers_ssl
   <% elsif !node[:haproxy][:java_backends].empty? -%>
