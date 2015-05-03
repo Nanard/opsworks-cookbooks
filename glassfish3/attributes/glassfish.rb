@@ -16,14 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#openInstaller Dry Run Answer File.  This File can be used as input to the openInstaller engine using the -a option.
 
 # unis system user
 set_unless[:glassfish3][:systemuser]="glassfish"
 #unix system group
 set_unless[:glassfish3][:systemgroup]="glassfish"
 # fetch_url
-set_unless[:glassfish3][:fetch_url]="http://download.java.net/glassfish/3.1.2.2/release/glassfish-3.1.2.2-unix.sh"
+set_unless[:glassfish3][:fetch_url]="http://download.java.net/glassfish/3.1.2.2/release/glassfish-3.1.2.2.zip"
 #InstallHome.directory.INSTALL_HOME=
 set_unless[:glassfish3][:INSTALL_HOME]="/opt/glassfish3"
 #License.license.ACCEPT_LICENSE=0

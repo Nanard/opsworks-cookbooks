@@ -9,7 +9,7 @@ user node[:glassfish3][:systemuser] do
   shell "/bin/sh"
 end
 
-remote_file "/tmp/glassfish.sh" do
+remote_file "/tmp/glassfish3.zip" do
   owner node[:glassfish3][:systemuser]
   source node[:glassfish3][:fetch_url]
   mode "0744"
@@ -31,8 +31,7 @@ directory node[:glassfish3][:INSTALL_HOME] do
 end
 
 execute "install-glassfish" do
-  command "/tmp/glassfish.sh -a #{answer_file} -s"
-  creates File.join(node[:glassfish3][:INSTALL_HOME],"uninstall.sh")
+  command "unzip /tmp/glassfish3.zip -d /opt/glassfish3"
   user node[:glassfish3][:systemuser]
   action :run
 end
