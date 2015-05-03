@@ -15,13 +15,6 @@ remote_file "/tmp/glassfish3.zip" do
   mode "0744"
 end
 
-answer_file = "/tmp/v3-prelude-answer"
-
-template answer_file do
-  owner node[:glassfish3][:systemuser]
-  source "answer_file.erb"
-end
-
 directory node[:glassfish3][:INSTALL_HOME] do
   owner node[:glassfish3][:systemuser]
   group node[:glassfish3][:systemgroup]
@@ -31,7 +24,7 @@ directory node[:glassfish3][:INSTALL_HOME] do
 end
 
 execute "install-glassfish" do
-  command "unzip /tmp/glassfish3.zip -d /opt/glassfish3"
+  command "unzip /tmp/glassfish3.zip -d /opt"
   user node[:glassfish3][:systemuser]
   action :run
 end
