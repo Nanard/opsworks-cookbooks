@@ -151,6 +151,8 @@ backend static_servers
   server <%= backend['name'] %> <%= backend['ip'] %>:80 weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_static] %> check inter <%= node[:haproxy][:check_interval] %>
   <% end -%>
 <% end -%>
+<% end -%>
+
 
 <% if !node[:haproxy][:static_backends].empty? -%>  
 backend static_servers_ssl
@@ -358,4 +360,4 @@ frontend https-in
   default_backend java_servers_ssl
   <% end -%>
 
-<% end -%>  
+<% end -%>
