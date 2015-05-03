@@ -269,7 +269,7 @@ frontend http-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
-  <% if !node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_ports].empty? -%>
   default_backend nodejs_app_servers
   <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
@@ -317,7 +317,7 @@ frontend https-in
   use_backend php_app_servers_ssl if php_applications_ssl
   <% end -%>
   <% unless node[:haproxy][:nodejs_applications].empty? || node[:haproxy][:nodejs_backends].empty? -%>
-  <% if !node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_ports].empty? -%>
   use_backend nodejs_app_servers_ssl if nodejs_applications_ssl
   <% end -%>
   <% end -%>
@@ -330,7 +330,7 @@ frontend https-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers_ssl
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
-  <% if !node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_ports].empty? -%>
   default_backend nodejs_app_servers_ssl
   <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
