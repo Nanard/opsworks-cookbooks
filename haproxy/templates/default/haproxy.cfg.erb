@@ -92,8 +92,8 @@ backend php_app_servers_ssl
   <% end -%>  
 <% end -%>
 
-<% if !node[:haproxy][:custom_ports].empty? -%>
-  <% node[:haproxy][:custom_ports].each do |app_name, app_config| -%>
+<% if !node[:haproxy][:custom_nodejs].empty? -%>
+  <% node[:haproxy][:custom_nodejs].each do |app_name, app_config| -%>
 backend nodejs_app_servers_<%= app_name %>
   reqrep ^([^\ :]*)\ <%= app_config['mounted_at'] %>(.*)     \1\ /\2
   balance <%= node[:haproxy][:balance] %>
@@ -128,14 +128,27 @@ backend nodejs_app_servers_ssl
   <% end -%>
 <% end -%>
 
-<% if !node[:haproxy][:static_backends].empty? -%>  
-backend static_servers
+<% if !node[:haproxy][:custom_static].empty? -%>
+  <% node[:haproxy][:custom_static].each do |app_name, app_config| -%>
+backend static_servers_<%= app_name %>
+  reqrep ^([^\ :]*)\ <%= app_config['mounted_at'] %>(.*)     \1\ /\2
   balance <%= node[:haproxy][:balance] %>
   option redispatch
   option forwardfor
   option httpchk GET <%= node[:haproxy][:health_check_url] %> # Nginx doesn't understand OPTIONS
   <% node[:haproxy][:static_backends].each do |backend| -%>
   server <%= backend['name'] %> <%= backend['ip'] %>:80 weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_static] %> check inter <%= node[:haproxy][:check_interval] %> 
+  <% end -%>
+<% end -%>
+<% else %>
+<% if !node[:haproxy][:static_backends].empty? -%>
+backend static_servers
+  balance <%= node[:haproxy][:balance] %>
+  option redispatch
+  option forwardfor
+  option httpchk GET <%= node[:haproxy][:health_check_url] %> # Nginx doesn't understand OPTIONS
+  <% node[:haproxy][:static_backends].each do |backend| -%>
+  server <%= backend['name'] %> <%= backend['ip'] %>:80 weight <%= backend['backends'] || 10 %> maxconn <%= backend['backends'] * node[:haproxy][:maxcon_factor_static] %> check inter <%= node[:haproxy][:check_interval] %>
   <% end -%>
 <% end -%>
 
@@ -269,11 +282,13 @@ frontend http-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
-  <% if node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_nodejs].empty? -%>
   default_backend nodejs_app_servers
   <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
+  <% if node[:haproxy][:custom_static].empty? -%>
   default_backend static_servers
+  <% end -%>
   <% elsif !node[:haproxy][:java_backends].empty? -%>
   default_backend java_servers
   <% end -%>
@@ -317,12 +332,14 @@ frontend https-in
   use_backend php_app_servers_ssl if php_applications_ssl
   <% end -%>
   <% unless node[:haproxy][:nodejs_applications].empty? || node[:haproxy][:nodejs_backends].empty? -%>
-  <% if node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_nodejs].empty? -%>
   use_backend nodejs_app_servers_ssl if nodejs_applications_ssl
   <% end -%>
   <% end -%>
   <% unless node[:haproxy][:static_applications].empty? || node[:haproxy][:static_backends].empty? -%>
+  <% if node[:haproxy][:custom_static].empty? -%>
   use_backend static_servers_ssl if static_applications_ssl
+  <% end -%>
   <% end -%>
   
   <% if !node[:haproxy][:rails_backends].empty? -%>
@@ -330,11 +347,13 @@ frontend https-in
   <% elsif !node[:haproxy][:php_backends].empty? -%>
   default_backend php_app_servers_ssl
   <% elsif !node[:haproxy][:nodejs_backends].empty? -%>
-  <% if node[:haproxy][:custom_ports].empty? -%>
+  <% if node[:haproxy][:custom_nodejs].empty? -%>
   default_backend nodejs_app_servers_ssl
   <% end -%>
   <% elsif !node[:haproxy][:static_backends].empty? -%>
+  <% if node[:haproxy][:custom_static].empty? -%>
   default_backend static_servers_ssl
+  <% end -%>
   <% elsif !node[:haproxy][:java_backends].empty? -%>
   default_backend java_servers_ssl
   <% end -%>
